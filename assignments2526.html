@@ -1,84 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>International Assignments</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
-    .competition-finder { max-width: 1200px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
-    h2 { color: #001489; font-style: italic; text-align: center; }
-    .results-info { margin: 20px 0; text-align: center; color: #333; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #ddd; padding: 8px; }
-    th { background-color: #001489; color: #fff; font-weight: bold; }
-    tr:nth-child(even) { background-color: #f9f9f9; }
-    @media (max-width: 768px) {
-      table, tbody, tr, td, th { display: block; width: 100%; }
-      tr { margin-bottom: 15px; border-radius: 6px; border: 1px solid #ddd; padding: 10px; }
-      td { position: relative; padding-left: 40%; text-align: left; }
-      td:before { position: absolute; left: 10px; font-weight: bold; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>International Assignments</title>
+  <style>
+    /* Desktop and general styles */
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f9f9f9;
+        margin: 0;
     }
-  </style>
-</head>
-<body>
-  <div class="competition-finder">
-    <h2>International Assignments</h2>
-    <div class="results-info" id="status">Loading data…</div>
-    <div id="table-container"></div>
-  </div>
-
-<script>
-    // Replace with your sheet's actual ID and tab (gid)
-    const SHEET_ID = "1hzDyT3jbnbVY1ge3h4qtcLVMQt5Pm6eJeg0hZsgE6bY";
-    const sheetJsonUrl = "https://docs.google.com/spreadsheets/d/1hzDyT3jbnbVY1ge3h4qtcLVMQt5Pm6eJeg0hZsgE6bY/gviz/tq?tqx=out:json&gid=0";
     
-    async function fetchAssignments() {
-        try {
-            const response = await fetch(sheetJsonUrl, { cache: "no-store" });
-            const text = await response.text();
-            
-            // Correctly parse the JSON response
-            const json = JSON.parse(text.match(/.*?({.*}).*/s)[1]);
-            const headers = json.table.cols.map(c => c.label).filter(h => h);
-            const rows = json.table.rows;
+    .competition-finder {
+        max-width: 1200px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    h2 {
+        color: #001489;
+        font-style: italic;
+        text-align: center;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+    }
+    
+    .results-info {
+        margin: 20px 0;
+        text-align: center;
+        color: #333;
+        font-size: 1.1em;
+        font-weight: bold;
+    }
+    
+    #table-container {
+        overflow-x: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+    }
+    
+    th {
+        background-color: #001489;
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    
+    tr:hover {
+        background-color: #f1f1f1;
+    }
 
-            const data = rows.map(r => {
-                let obj = {};
-                headers.forEach((h, i) => {
-                    const cell = r.c[i];
-                    obj[h] = cell && cell.v ? cell.v : "";
-                });
-                return obj;
-            });
+    /* Mobile-first approach: Hide table headers on small screens and format as cards */
+    @media (max-width: 768px) {
+        table, tbody, tr, td, th {
+            display: block;
+            width: 100%;
+        }
 
-            renderTable(headers, data);
-            setStatus(`Loaded ${data.length} assignments.`);
-        } catch (err) {
-            console.error("Error loading sheet:", err);
-            setStatus("Failed to load data. Make sure the sheet is published and accessible.");
+        thead {
+            display: none; /* Hide the table header on mobile */
+        }
+    
+        tr {
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+    
+        td {
+            border: none;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 120px; /* Space for the label */
+            text-align: left;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+    
+        td:before {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: #DA291C;
+            content: attr(data-label);
+            width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    
+        td:last-child {
+            border-bottom: none;
         }
     }
+  </style>
+</head>
+<body>
+  <div class="competition-finder">
+    <h2>International Assignments</h2>
+    <div class="results-info" id="status">Loading data…</div>
+    <div id="table-container"></div>
+  </div>
 
-    function renderTable(headers, data) {
-        let html = "<table><thead><tr>";
-        headers.forEach(h => html += `<th>${h}</th>`);
-        html += "</tr></thead><tbody>";
-        data.forEach(row => {
-            html += "<tr>";
-            headers.forEach(h => html += `<td data-label="${h}">${row[h] || ""}</td>`);
-            html += "</tr>";
-        });
-        html += "</tbody></table>";
-        document.getElementById("table-container").innerHTML = html;
-    }
+  <script>
+    const SHEET_ID = "1hzDyT3jbnbVY1ge3h4qtcLVMQt5Pm6eJeg0hZsgE6bY";
+    const sheetJsonUrl = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:json&gid=0";
+    
+    async function fetchAssignments() {
+      try {
+        const response = await fetch(sheetJsonUrl, { cache: "no-store" });
+        if (!response.ok) throw new Error('Network response was not ok.');
+        const text = await response.text();
+        const json = JSON.parse(text.match(/.*?({.*}).*/s)[1]);
+        
+        const headers = json.table.cols.map(c => c.label).filter(h => h);
+        const rows = json.table.rows;
 
-    function setStatus(msg) {
-        document.getElementById("status").textContent = msg;
-    }
+        const data = rows.map(r => {
+          let obj = {};
+          headers.forEach((h, i) => {
+            const cell = r.c[i];
+            obj[h] = cell && cell.v ? cell.v : "";
+          });
+          return obj;
+        });
 
-    document.addEventListener("DOMContentLoaded", fetchAssignments);
-</script>
+        renderTable(headers, data);
+        setStatus(`Loaded ${data.length} assignments.`);
+      } catch (err) {
+        console.error("Error loading sheet:", err);
+        setStatus("Failed to load data. Make sure the sheet is published and accessible.");
+      }
+    }
 
+    function renderTable(headers, data) {
+      let html = "<table><thead><tr>";
+      headers.forEach(h => html += `<th>${h}</th>`);
+      html += "</tr></thead><tbody>";
+      data.forEach(row => {
+        html += "<tr>";
+        headers.forEach(h => html += `<td data-label="${h}">${row[h] || ""}</td>`);
+        html += "</tr>";
+      });
+      html += "</tbody></table>";
+      document.getElementById("table-container").innerHTML = html;
+    }
+
+    function setStatus(msg) {
+      document.getElementById("status").textContent = msg;
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchAssignments);
+  </script>
 </body>
 </html>
