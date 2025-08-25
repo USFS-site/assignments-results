@@ -246,9 +246,8 @@
             
             const rows = csvText.trim().split('\n').filter(row => row.trim() !== '');
 
-            // Use a more specific regex to capture headers accurately
             const headersRow = rows[0];
-            const headerRegex = /[A-Z][A-Z\s]+(?=[A-Z\s]|$)/g;
+            const headerRegex = /([A-Z][A-Z\s]*)/g;
             headers = headersRow.match(headerRegex) || [];
             headers = headers.map(h => h.trim());
 
@@ -265,7 +264,7 @@
                     let value = row.substring(startPos, endPos).trim();
 
                     if (disciplineHeaders.includes(header)) {
-                        dataObject[header.toLowerCase().replace(' ', '_')] = value.split(/\s+(?=[A-Z])|\n/).map(s => s.trim()).filter(s => s.length > 0);
+                        dataObject[header.toLowerCase().replace(' ', '_')] = value.split(/\s(?=[A-Z])|\n/).map(s => s.trim()).filter(s => s.length > 0);
                     } else {
                         dataObject[header.toLowerCase().replace(' ', '_')] = value;
                     }
