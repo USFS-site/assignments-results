@@ -1,181 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>International Assignments</title>
-  <style>
-    /* Desktop and general styles */
-    body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        background: #f9f9f9;
-        margin: 0;
-    }
-    
-    .competition-finder {
-        max-width: 1200px;
-        margin: auto;
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    h2 {
-        color: #001489;
-        font-style: italic;
-        text-align: center;
-        font-size: 2.5em;
-        margin-bottom: 20px;
-    }
-    
-    .results-info {
-        margin: 20px 0;
-        text-align: center;
-        color: #333;
-        font-size: 1.1em;
-        font-weight: bold;
-    }
-    
-    #table-container {
-        overflow-x: auto;
-    }
-    
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    
-    th, td {
-        border: 1px solid #ddd;
-        padding: 12px;
-        text-align: left;
-    }
-    
-    th {
-        background-color: #001489;
-        color: #fff;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-    
-    tr:hover {
-        background-color: #f1f1f1;
-    }
-
-    /* Mobile-first approach: Hide table headers on small screens and format as cards */
-    @media (max-width: 768px) {
-        table, tbody, tr, td, th {
-            display: block;
-            width: 100%;
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>International Assignments</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f9f9f9;
+            margin: 0;
         }
 
-        thead {
-            display: none; /* Hide the table header on mobile */
+        .competition-finder {
+            max-width: 1200px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-    
-        tr {
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+        h2 {
+            color: #001489;
+            font-style: italic;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
         }
-    
-        td {
-            border: none;
-            border-bottom: 1px solid #eee;
-            position: relative;
-            padding-left: 120px; /* Space for the label */
-            text-align: left;
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
-    
-        td:before {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
+
+        .results-info {
+            margin: 20px 0;
+            text-align: center;
+            color: #333;
+            font-size: 1.1em;
             font-weight: bold;
-            color: #DA291C;
-            content: attr(data-label);
-            width: 100px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
-    
-        td:last-child {
-            border-bottom: none;
+
+        #table-container {
+            overflow-x: auto;
         }
-    }
-  </style>
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #001489;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Mobile-first approach: Hide table headers on small screens and format as cards */
+        @media (max-width: 768px) {
+            table, tbody, tr, td, th {
+                display: block;
+                width: 100%;
+            }
+
+            thead {
+                display: none; /* Hide the table header on mobile */
+            }
+
+            tr {
+                margin-bottom: 15px;
+                border-radius: 6px;
+                border: 1px solid #ddd;
+                padding: 10px;
+                background-color: #fff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            }
+
+            td {
+                border: none;
+                border-bottom: 1px solid #eee;
+                position: relative;
+                padding-left: 120px; /* Space for the label */
+                text-align: left;
+                padding-top: 8px;
+                padding-bottom: 8px;
+            }
+
+            td:before {
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-weight: bold;
+                color: #DA291C;
+                content: attr(data-label);
+                width: 100px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            td:last-child {
+                border-bottom: none;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="competition-finder">
-    <h2>International Assignments</h2>
-    <div class="results-info" id="status">Loading data…</div>
-    <div id="table-container"></div>
-  </div>
+    <div class="competition-finder">
+        <h2>International Assignments</h2>
+        <div class="results-info" id="status">Loading data…</div>
+        <div id="table-container"></div>
+    </div>
 
-  <script>
-    const SHEET_ID = "1hzDyT3jbnbVY1ge3h4qtcLVMQt5Pm6eJeg0hZsgE6bY";
-    const sheetJsonUrl = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:json&gid=0";
-    
-    async function fetchAssignments() {
-      try {
-        const response = await fetch(sheetJsonUrl, { cache: "no-store" });
-        if (!response.ok) throw new Error('Network response was not ok.');
-        const text = await response.text();
-        const json = JSON.parse(text.match(/.*?({.*}).*/s)[1]);
-        
-        const headers = json.table.cols.map(c => c.label).filter(h => h);
-        const rows = json.table.rows;
+    <script>
+        async function fetchAssignments() {
+            const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTE2kR2hK3xHnFw_8L0Qn78w2S6sE2f9f1b-5j0a-9d0a-9d0a-9d0a/pub?output=csv';
 
-        const data = rows.map(r => {
-          let obj = {};
-          headers.forEach((h, i) => {
-            const cell = r.c[i];
-            obj[h] = cell && cell.v ? cell.v : "";
-          });
-          return obj;
-        });
+            try {
+                const response = await fetch(sheetUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const csvText = await response.text();
+                
+                const lines = csvText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+                const headers = lines[0].split(',').map(header => header.trim());
+                const data = lines.slice(1).map(line => {
+                    const values = line.split(',').map(value => value.trim());
+                    const rowObject = {};
+                    headers.forEach((header, i) => {
+                        rowObject[header] = values[i];
+                    });
+                    return rowObject;
+                });
 
-        renderTable(headers, data);
-        setStatus(`Loaded ${data.length} assignments.`);
-      } catch (err) {
-        console.error("Error loading sheet:", err);
-        setStatus("Failed to load data. Make sure the sheet is published and accessible.");
-      }
-    }
+                renderTable(headers, data);
+                setStatus(`Loaded ${data.length} assignments.`);
+            } catch (error) {
+                console.error('Error fetching assignments:', error);
+                setStatus('Failed to load data. Please check the URL and your internet connection.');
+            }
+        }
 
-    function renderTable(headers, data) {
-      let html = "<table><thead><tr>";
-      headers.forEach(h => html += `<th>${h}</th>`);
-      html += "</tr></thead><tbody>";
-      data.forEach(row => {
-        html += "<tr>";
-        headers.forEach(h => html += `<td data-label="${h}">${row[h] || ""}</td>`);
-        html += "</tr>";
-      });
-      html += "</tbody></table>";
-      document.getElementById("table-container").innerHTML = html;
-    }
+        function renderTable(headers, data) {
+            let tableHtml = '<table><thead><tr>';
+            headers.forEach(header => {
+                tableHtml += `<th>${header}</th>`;
+            });
+            tableHtml += '</tr></thead><tbody>';
 
-    function setStatus(msg) {
-      document.getElementById("status").textContent = msg;
-    }
+            data.forEach(row => {
+                tableHtml += '<tr>';
+                headers.forEach(header => {
+                    tableHtml += `<td data-label="${header}">${row[header] || ''}</td>`;
+                });
+                tableHtml += '</tr>';
+            });
 
-    document.addEventListener("DOMContentLoaded", fetchAssignments);
-  </script>
+            tableHtml += '</tbody></table>';
+            document.getElementById('table-container').innerHTML = tableHtml;
+        }
+
+        function setStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchAssignments);
+    </script>
 </body>
 </html>
