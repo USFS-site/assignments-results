@@ -1,343 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>International Assignments</title>
-    <style type="text/css">
-        /* Widget Container */
-        .competition-finder {
-            font-family: Arial, sans-serif;
-            max-width: 1440px;
-            margin: 0 auto;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>International Assignments</title>
 
-        .competition-finder h2 {
-            color: #001489;
-            font-weight: 800;
-            font-style: italic;
-            margin-bottom: 20px;
-            font-size: 48px;
-        }
+  <!-- Papa Parse (robust CSV parser) -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-        /* Filter Section */
-        .filter-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px 10px;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 6px;
-        }
-        
-        .filter-group {
-            flex: 1 1 200px;
-            min-width: 150px;
-            max-width: 250px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .filter-group label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #201747;
-        }
-
-        .filter-group input,
-        .filter-group select {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .search-btn {
-            background: #001489;
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 6px;
-        }
-        
-        .search-btn:hover {
-            background: #232769;
-        }
-
-        /* Results Section */
-        .results-info {
-            margin: 20px 0;
-            font-style: italic;
-            color: #666;
-        }
-        
-        /* Desktop Table Layout */
-        .competition-table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-        }
-        
-        .competition-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-        
-        .competition-table th,
-        .competition-table td {
-            padding: 8px;
-            text-align: left;
-            vertical-align: top;
-            border: 1px solid #ddd;
-            white-space: normal;
-            word-wrap: break-word;
-            overflow-wrap: anywhere;
-        }
-        
-        .competition-table th {
-            background: #f1f1f1;
-            font-weight: bold;
-            color: #DA291C;
-        }
-        
-        .competition-table tr:hover {
-            background: #f9f9f9;
-        }
-        
-        .event-name {
-            font-weight: bold;
-            color: #001489;
-        }
-        
-        .event-link {
-            color: #0066cc;
-            text-decoration: none;
-        }
-        
-        .event-link:hover {
-            text-decoration: underline;
-        }
-        
-        .discipline-badge {
-            background: #9ADBE8;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #4863AE;
-            display: inline-block;
-        }
-
-        /* Responsive Design: Mobile View */
-        @media (max-width: 768px) {
-            .filter-section {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .filter-group {
-                flex: 1 1 100%;
-                max-width: 100%;
-            }
-
-            .filter-group label { font-size: 14px; }
-            .filter-group input { font-size: 14px; }
-
-            /* Hide the table headers on mobile */
-            .competition-table thead {
-                display: none;
-            }
-
-            /* Display table rows as blocks (cards) */
-            .competition-table, .competition-table tbody, .competition-table tr {
-                display: block;
-                width: 100%;
-            }
-
-            /* Style individual cards */
-            .competition-table tr {
-                margin-bottom: 15px;
-                border: 1px solid #ddd;
-                border-radius: 6px;
-                background-color: #fff;
-                padding: 10px;
-            }
-
-            /* Each table cell becomes a block with a label */
-            .competition-table td {
-                border: none;
-                position: relative;
-                padding-left: 100px;
-                min-height: 25px;
-                display: flex;
-                align-items: center;
-                border-bottom: 1px solid #eee;
-            }
-            
-            /* Create the labels from the data attributes */
-            .competition-table td:before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                font-weight: bold;
-                color: #DA291C;
-                width: 90px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            
-            /* Remove the bottom border for the last cell */
-            .competition-table tr td:last-child {
-                border-bottom: none;
-            }
-        }
-    </style>
+  <style type="text/css">
+    /* Widget Container */
+    .competition-finder {
+      font-family: Arial, sans-serif;
+      max-width: 1440px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .competition-finder h2 {
+      color: #001489;
+      font-weight: 800;
+      font-style: italic;
+      margin-bottom: 20px;
+      font-size: 48px;
+    }
+    /* Filter Section */
+    .filter-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px 10px;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+    .filter-group {
+      flex: 1 1 200px;
+      min-width: 150px;
+      max-width: 250px;
+      display: flex;
+      flex-direction: column;
+    }
+    .filter-group label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #201747;
+    }
+    .filter-group input,
+    .filter-group select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .search-btn {
+      background: #001489;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 6px;
+    }
+    .search-btn:hover { background: #232769; }
+    /* Results Section */
+    .results-info {
+      margin: 20px 0;
+      font-style: italic;
+      color: #666;
+    }
+    /* Desktop Table Layout */
+    .competition-table-wrapper { width: 100%; overflow-x: auto; }
+    .competition-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    .competition-table th, .competition-table td {
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+      border: 1px solid #ddd;
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+    .competition-table th {
+      background: #f1f1f1;
+      font-weight: bold;
+      color: #DA291C;
+    }
+    .competition-table tr:hover { background: #f9f9f9; }
+    /* Responsive Design: Mobile View */
+    @media (max-width: 768px) {
+      .filter-section { flex-direction: column; gap: 10px; }
+      .filter-group { flex: 1 1 100%; max-width: 100%; }
+      .filter-group label { font-size: 14px; }
+      .filter-group input { font-size: 14px; }
+      .competition-table thead { display: none; }
+      .competition-table, .competition-table tbody, .competition-table tr {
+        display: block; width: 100%;
+      }
+      .competition-table tr {
+        margin-bottom: 15px; border: 1px solid #ddd;
+        border-radius: 6px; background-color: #fff; padding: 10px;
+      }
+      .competition-table td {
+        border: none; position: relative; padding-left: 100px;
+        min-height: 25px; display: flex; align-items: center;
+        border-bottom: 1px solid #eee;
+      }
+      .competition-table td:before {
+        content: attr(data-label);
+        position: absolute; left: 10px; font-weight: bold; color: #DA291C;
+        width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .competition-table tr td:last-child { border-bottom: none; }
+    }
+  </style>
 </head>
 <body>
-
-<div class="competition-finder">
+  <div class="competition-finder">
     <h2>International Assignments</h2>
 
     <div class="filter-section">
-        <div class="filter-group">
-            <label for="competitionName">Competition Name</label>
-            <input id="competitionName" name="competitionName" placeholder="e.g., Skate America" type="text" />
-        </div>
-        <div class="filter-group">
-            <label for="skaterName">Skater's Last Name</label>
-            <input id="skaterName" name="skaterName" placeholder="e.g., Brown" type="text" />
-        </div>
-        <div class="filter-group">
-            <button class="search-btn" onclick="filterAssignments()" type="button">Search</button>
-        </div>
+      <div class="filter-group">
+        <label for="competitionName">Competition Name</label>
+        <input id="competitionName" name="competitionName" placeholder="e.g., Skate America" type="text" />
+      </div>
+      <div class="filter-group">
+        <label for="skaterName">Skater's Last Name</label>
+        <input id="skaterName" name="skaterName" placeholder="e.g., Brown" type="text" />
+      </div>
+      <div class="filter-group">
+        <button class="search-btn" type="button" onclick="filterAssignments()">Search</button>
+      </div>
     </div>
-    
+
     <div class="results-info" id="resultsInfo">Loading data...</div>
+
     <div class="competition-table-wrapper">
-        <table class="competition-table">
-            <thead>
-                <tr></tr>
-            </thead>
-            <tbody id="competitionResults">
-            </tbody>
-        </table>
+      <table class="competition-table">
+        <thead>
+          <tr id="tableHeadRow"></tr>
+        </thead>
+        <tbody id="competitionResults"></tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<script>
+  <script>
     let assignmentsData = [];
-    let disciplineHeaders = [];
     let headers = [];
+    let disciplineHeaders = [];
 
-    async function fetchAssignments() {
-        const googleSheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9FRxYE8Vh7gaJG_vYJ8Fgj15UI-6e6YAf_AS3KDg5fAaVCZMfHvQbGH5AWIPQc7BxcELxcyZTMd1J/pub?output=csv';
-        const proxyUrl = 'https://api.allorigins.win/raw?url=';
-        const finalUrl = proxyUrl + encodeURIComponent(googleSheetUrl);
-        
-        try {
-            const response = await fetch(finalUrl);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const csvText = await response.text();
-            
-            const rows = csvText.trim().split('\n');
-            headers = rows[0].split(',').map(h => h.trim());
+    const FIXED_HEADERS = ['COMPETITION', 'LOCATION', 'DATES'];
 
-            assignmentsData = rows.slice(1).map(row => {
-                const values = row.split(',');
-                let dataObject = {};
-                headers.forEach((header, i) => {
-                    dataObject[header.toLowerCase().replace(/\s+/g, '_')] = values[i] ? values[i].trim() : '';
-                });
-                return dataObject;
-            });
-            
-            disciplineHeaders = headers.filter(h => !['COMPETITION','LOCATION','DATES'].includes(h));
+    const googleSheetCsvUrl =
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9FRxYE8Vh7gaJG_vYJ8Fgj15UI-6e6YAf_AS3KDg5fAaVCZMfHvQbGH5AWIPQc7BxcELxcyZTMd1J/pub?output=csv';
 
-            updateTableHeaders(headers);
-            filterAssignments();
-        } catch (error) {
-            document.getElementById('resultsInfo').textContent = 'Failed to load data. Please check the URL and your internet connection.';
-            console.error('Error fetching assignments:', error);
-        }
+    const allOrigins = (url) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+
+    function setStatus(msg) {
+      document.getElementById('resultsInfo').textContent = msg;
     }
 
-    function updateTableHeaders(headers) {
-        const theadRow = document.querySelector('.competition-table thead tr');
-        theadRow.innerHTML = ''; // Clear existing headers
-        headers.forEach(header => {
-            theadRow.innerHTML += `<th>${header}</th>`;
+    function normalizeKey(label) {
+      return label.trim().toLowerCase().replace(/\s+/g, '_');
+    }
+
+    async function fetchCsvText() {
+      // Try direct fetch first (generally works from GitHub Pages to Google)
+      try {
+        const r1 = await fetch(googleSheetCsvUrl, { cache: 'no-store' });
+        if (!r1.ok) throw new Error('HTTP ' + r1.status);
+        return await r1.text();
+      } catch (e1) {
+        // Fallback via AllOrigins (adds CORS headers)
+        try {
+          const r2 = await fetch(allOrigins(googleSheetCsvUrl), { cache: 'no-store' });
+          if (!r2.ok) throw new Error('HTTP ' + r2.status);
+          return await r2.text();
+        } catch (e2) {
+          throw new Error('Fetch failed: ' + e1.message + ' | Fallback failed: ' + e2.message);
+        }
+      }
+    }
+
+    function buildTableHeaders(hdrs) {
+      const tr = document.getElementById('tableHeadRow');
+      tr.innerHTML = '';
+      hdrs.forEach(h => {
+        const th = document.createElement('th');
+        th.textContent = h;
+        tr.appendChild(th);
+      });
+    }
+
+    function displayAssignments(rows) {
+      const tbody = document.getElementById('competitionResults');
+      tbody.innerHTML = '';
+      if (!rows || rows.length === 0) {
+        const colspan = headers.length || 1;
+        tbody.innerHTML = `<tr><td colspan="${colspan}" style="text-align:center;">No assignments found.</td></tr>`;
+        return;
+      }
+      rows.forEach(row => {
+        const tr = document.createElement('tr');
+        let html = '';
+        headers.forEach(h => {
+          // Use the exact header text to access the field from Papa Parse result
+          let val = row[h] ?? '';
+          // Convert arrays/objects defensively to string
+          if (Array.isArray(val)) val = val.join(', ');
+          if (typeof val === 'object' && val !== null) val = String(val);
+          html += `<td data-label="${h}">${val}</td>`;
         });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateCounts(n) {
+      setStatus(`Showing ${n} ${n === 1 ? 'assignment' : 'assignments'}`);
     }
 
     function filterAssignments() {
-        const competitionName = document.getElementById('competitionName').value.toLowerCase();
-        const skaterName = document.getElementById('skaterName').value.toLowerCase();
-        
-        let filteredAssignments = assignmentsData.filter(assignment => {
-            if (competitionName && !assignment.competition.toLowerCase().includes(competitionName)) {
-                return false;
-            }
+      const competitionName = (document.getElementById('competitionName').value || '').toLowerCase().trim();
+      const skaterQuery = (document.getElementById('skaterName').value || '').toLowerCase().trim();
 
-            if (skaterName) {
-                const foundSkater = disciplineHeaders.some(discipline => {
-                    const skatersList = assignment[discipline.toLowerCase().replace(/\s+/g, '_')];
-                    if (!skatersList) return false;
-                    return skatersList.toLowerCase().includes(skaterName);
-                });
-                if (!foundSkater) {
-                    return false;
-                }
-            }
-            return true;
-        });
-
-        displayAssignments(filteredAssignments);
-        updateResultsInfo(filteredAssignments.length);
-    }
-
-    function displayAssignments(assignments) {
-        const tbody = document.getElementById('competitionResults');
-        tbody.innerHTML = '';
-        if (assignments.length === 0) {
-            const colspan = headers.length > 0 ? headers.length : 1;
-            tbody.innerHTML = `<tr><td colspan="${colspan}" style="text-align: center;">No assignments found.</td></tr>`;
-            return;
+      const filtered = assignmentsData.filter(row => {
+        // Competition match (exact header text "COMPETITION" expected)
+        if (competitionName) {
+          const comp = (row['COMPETITION'] || '').toLowerCase();
+          if (!comp.includes(competitionName)) return false;
         }
-        
-        assignments.forEach(assignment => {
-            const row = document.createElement('tr');
-            
-            let htmlContent = '';
-            headers.forEach(header => {
-                const key = header.toLowerCase().replace(/\s+/g, '_');
-                let value = assignment[key];
-                htmlContent += `<td data-label="${header}">${value}</td>`;
-            });
 
-            row.innerHTML = htmlContent;
-            tbody.appendChild(row);
+        if (skaterQuery) {
+          // Search across all discipline columns (anything that's not in FIXED_HEADERS)
+          const found = disciplineHeaders.some(h => {
+            const cell = (row[h] || '').toString().toLowerCase();
+            return cell.includes(skaterQuery);
+          });
+          if (!found) return false;
+        }
+        return true;
+      });
+
+      displayAssignments(filtered);
+      updateCounts(filtered.length);
+    }
+
+    async function init() {
+      try {
+        setStatus('Loading data...');
+        const csvText = await fetchCsvText();
+
+        // Parse with headers; robust against commas/quotes/newlines inside cells
+        const parsed = Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          dynamicTyping: false
         });
+
+        if (parsed.errors && parsed.errors.length) {
+          console.error('CSV parse errors:', parsed.errors);
+        }
+
+        // Papa gives exact header labels in meta.fields
+        headers = (parsed.meta && parsed.meta.fields) ? parsed.meta.fields.map(h => h.trim()) : [];
+
+        if (!headers.length) {
+          throw new Error('No headers found in CSV. Make sure the sheet is published and the first row contains column names.');
+        }
+
+        // Determine discipline columns as "everything not in FIXED_HEADERS"
+        const fixedSet = new Set(FIXED_HEADERS);
+        disciplineHeaders = headers.filter(h => !fixedSet.has(h.trim().toUpperCase()));
+
+        assignmentsData = parsed.data; // array of objects keyed by the exact CSV headers
+
+        buildTableHeaders(headers);
+        displayAssignments(assignmentsData);
+        updateCounts(assignmentsData.length);
+
+        // Hook up live filter on Enter key
+        ['competitionName', 'skaterName'].forEach(id => {
+          const el = document.getElementById(id);
+          el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') filterAssignments();
+          });
+        });
+
+        setStatus(`Showing ${assignmentsData.length} ${assignmentsData.length === 1 ? 'assignment' : 'assignments'}`);
+      } catch (err) {
+        console.error(err);
+        setStatus('Failed to load data. Confirm the sheet is "Published to the web" as CSV and try again.');
+      }
     }
 
-    function updateResultsInfo(count) {
-        const resultsInfo = document.getElementById('resultsInfo');
-        resultsInfo.textContent = `Showing ${count} ${count === 1 ? 'assignment' : 'assignments'}`;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchAssignments();
-    });
-</script>
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
