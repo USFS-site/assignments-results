@@ -244,26 +244,34 @@
             const response = await fetch(csvUrl);
             const csvText = await response.text();
             
+            // Split the content by new lines
             const rows = csvText.trim().split('\n').filter(row => row.trim() !== '');
-            
-            // Extract the headers, splitting by capital letters
+
+            // The first row contains headers. Find them by looking for uppercase words.
             const headersRow = rows[0];
-            headers = headersRow.match(/([A-Z][a-z\s]+)/g).map(h => h.trim().toUpperCase());
+            const headerRegex = /[A-Z][A-Z\s]+(?=[A-Z])/g;
+            headers = headersRow.match(headerRegex) || [];
             
-            // Assume the first 3 columns are general info, rest are disciplines
+            // The last header is not followed by another uppercase word, so we add it manually
+            const lastHeader = headersRow.substring(headersRow.lastIndexOf(headers[headers.length-1]) + headers[headers.length-1].length).trim();
+            if(lastHeader) {
+                headers.push(lastHeader);
+            }
+
+            const headerPositions = headers.map(h => headersRow.indexOf(h));
+            
             const fixedHeaders = ['COMPETITION', 'LOCATION', 'DATES'];
             disciplineHeaders = headers.filter(header => !fixedHeaders.includes(header));
             
             assignmentsData = rows.slice(1).map(row => {
                 let dataObject = {};
-                let currentPos = 0;
-                headers.forEach(header => {
-                    let nextHeaderPos = headersRow.indexOf(headers[headers.indexOf(header) + 1], currentPos);
-                    let value = nextHeaderPos !== -1 ? row.substring(currentPos, nextHeaderPos).trim() : row.substring(currentPos).trim();
-                    currentPos = nextHeaderPos;
+                headers.forEach((header, index) => {
+                    let startPos = headerPositions[index];
+                    let endPos = headerPositions[index + 1] || row.length;
+                    let value = row.substring(startPos, endPos).trim();
 
                     if (disciplineHeaders.includes(header)) {
-                        dataObject[header.toLowerCase().replace(' ', '_')] = value.split(/\s(?=[A-Z])/).map(s => s.trim()).filter(s => s.length > 0);
+                        dataObject[header.toLowerCase().replace(' ', '_')] = value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
                     } else {
                         dataObject[header.toLowerCase()] = value;
                     }
@@ -356,5 +364,6 @@
         fetchAssignments();
     });
 </script>
+
 </body>
 </html>
