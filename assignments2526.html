@@ -244,19 +244,13 @@
             const response = await fetch(csvUrl);
             const csvText = await response.text();
             
-            // Split the content by new lines
             const rows = csvText.trim().split('\n').filter(row => row.trim() !== '');
 
-            // The first row contains headers. Find them by looking for uppercase words.
+            // Use a more specific regex to capture headers accurately
             const headersRow = rows[0];
-            const headerRegex = /[A-Z][A-Z\s]+(?=[A-Z])/g;
+            const headerRegex = /[A-Z][A-Z\s]+(?=[A-Z\s]|$)/g;
             headers = headersRow.match(headerRegex) || [];
-            
-            // The last header is not followed by another uppercase word, so we add it manually
-            const lastHeader = headersRow.substring(headersRow.lastIndexOf(headers[headers.length-1]) + headers[headers.length-1].length).trim();
-            if(lastHeader) {
-                headers.push(lastHeader);
-            }
+            headers = headers.map(h => h.trim());
 
             const headerPositions = headers.map(h => headersRow.indexOf(h));
             
@@ -271,9 +265,9 @@
                     let value = row.substring(startPos, endPos).trim();
 
                     if (disciplineHeaders.includes(header)) {
-                        dataObject[header.toLowerCase().replace(' ', '_')] = value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+                        dataObject[header.toLowerCase().replace(' ', '_')] = value.split(/\s+(?=[A-Z])|\n/).map(s => s.trim()).filter(s => s.length > 0);
                     } else {
-                        dataObject[header.toLowerCase()] = value;
+                        dataObject[header.toLowerCase().replace(' ', '_')] = value;
                     }
                 });
                 return dataObject;
@@ -364,6 +358,5 @@
         fetchAssignments();
     });
 </script>
-
 </body>
 </html>
