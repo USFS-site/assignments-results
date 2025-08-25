@@ -247,9 +247,18 @@
             const rows = csvText.trim().split('\n').filter(row => row.trim() !== '');
 
             const headersRow = rows[0];
-            const headerRegex = /([A-Z][A-Z\s]*)/g;
-            headers = headersRow.match(headerRegex) || [];
-            headers = headers.map(h => h.trim());
+            const headerRegex = /([A-Z][A-Z\s]+)(?=[A-Z])/g;
+            let currentMatch;
+            const headerMatches = [];
+            while ((currentMatch = headerRegex.exec(headersRow)) !== null) {
+                headerMatches.push(currentMatch[1].trim());
+            }
+            headers = headerMatches;
+            
+            const lastHeader = headersRow.substring(headersRow.lastIndexOf(headers[headers.length-1]) + headers[headers.length-1].length).trim();
+            if(lastHeader && !headers.includes(lastHeader)) {
+                headers.push(lastHeader);
+            }
 
             const headerPositions = headers.map(h => headersRow.indexOf(h));
             
@@ -264,7 +273,7 @@
                     let value = row.substring(startPos, endPos).trim();
 
                     if (disciplineHeaders.includes(header)) {
-                        dataObject[header.toLowerCase().replace(' ', '_')] = value.split(/\s(?=[A-Z])|\n/).map(s => s.trim()).filter(s => s.length > 0);
+                        dataObject[header.toLowerCase().replace(' ', '_')] = value.split(/\s+(?=[A-Z])|\n/).map(s => s.trim()).filter(s => s.length > 0);
                     } else {
                         dataObject[header.toLowerCase().replace(' ', '_')] = value;
                     }
