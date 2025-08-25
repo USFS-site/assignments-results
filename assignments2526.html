@@ -20,9 +20,8 @@
   <div id="table-container"></div>
 
   <script>
-    const sheetJsonUrl =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9FRxYE8Vh7gaJG_vYJ8Fgj15UI-6e6YAf_AS3KDg5fAaVCZMfHvQbGH5AWIPQc7BxcELxcyZTMd1J/gviz/tq?tqx=out:json";
-
+    const sheetJsonUrl = "https://docs.google.com/spreadsheets/d/1AbCdEfGhIjKlMnOpQrStUvWxYz1234567890/gviz/tq?tqx=out:json&gid=0";
+    
     async function fetchAssignments() {
       try {
         const res = await fetch(sheetJsonUrl, { cache: "no-store" });
