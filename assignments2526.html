@@ -28,54 +28,57 @@
     <div id="table-container"></div>
   </div>
 
-  <script>
+<script>
     // Replace with your sheet's actual ID and tab (gid)
     const SHEET_ID = "1hzDyT3jbnbVY1ge3h4qtcLVMQt5Pm6eJeg0hZsgE6bY";
     const sheetJsonUrl = "https://docs.google.com/spreadsheets/d/1hzDyT3jbnbVY1ge3h4qtcLVMQt5Pm6eJeg0hZsgE6bY/gviz/tq?tqx=out:json&gid=0";
     
     async function fetchAssignments() {
-      try {
-        const response = await fetch(sheetJsonUrl, { cache: "no-store" });
-        const text = await response.text();
-        const json = JSON.parse(text.match(/.*?({.*}).*/s)[1]);
-        const headers = json.table.cols.map(c => c.label).filter(h => h);
-        const rows = json.table.rows;
+        try {
+            const response = await fetch(sheetJsonUrl, { cache: "no-store" });
+            const text = await response.text();
+            
+            // Correctly parse the JSON response
+            const json = JSON.parse(text.match(/.*?({.*}).*/s)[1]);
+            const headers = json.table.cols.map(c => c.label).filter(h => h);
+            const rows = json.table.rows;
 
-        const data = rows.map(r => {
-          let obj = {};
-          headers.forEach((h, i) => {
-            const cell = r.c[i];
-            obj[h] = cell && cell.v ? cell.v : "";
-          });
-          return obj;
-        });
+            const data = rows.map(r => {
+                let obj = {};
+                headers.forEach((h, i) => {
+                    const cell = r.c[i];
+                    obj[h] = cell && cell.v ? cell.v : "";
+                });
+                return obj;
+            });
 
-        renderTable(headers, data);
-        setStatus(\`Loaded \${data.length} assignments.\`);
-      } catch (err) {
-        console.error("Error loading sheet:", err);
-        setStatus("Failed to load data. Make sure the sheet is published and accessible.");
-      }
+            renderTable(headers, data);
+            setStatus(`Loaded ${data.length} assignments.`);
+        } catch (err) {
+            console.error("Error loading sheet:", err);
+            setStatus("Failed to load data. Make sure the sheet is published and accessible.");
+        }
     }
 
     function renderTable(headers, data) {
-      let html = "<table><thead><tr>";
-      headers.forEach(h => html += \`<th>\${h}</th>\`);
-      html += "</tr></thead><tbody>";
-      data.forEach(row => {
-        html += "<tr>";
-        headers.forEach(h => html += \`<td>\${row[h] || ""}</td>\`);
-        html += "</tr>";
-      });
-      html += "</tbody></table>";
-      document.getElementById("table-container").innerHTML = html;
+        let html = "<table><thead><tr>";
+        headers.forEach(h => html += `<th>${h}</th>`);
+        html += "</tr></thead><tbody>";
+        data.forEach(row => {
+            html += "<tr>";
+            headers.forEach(h => html += `<td data-label="${h}">${row[h] || ""}</td>`);
+            html += "</tr>";
+        });
+        html += "</tbody></table>";
+        document.getElementById("table-container").innerHTML = html;
     }
 
     function setStatus(msg) {
-      document.getElementById("status").textContent = msg;
+        document.getElementById("status").textContent = msg;
     }
 
     document.addEventListener("DOMContentLoaded", fetchAssignments);
-  </script>
+</script>
+
 </body>
 </html>
