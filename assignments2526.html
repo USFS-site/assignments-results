@@ -247,7 +247,7 @@
             const rows = csvText.trim().split('\n').filter(row => row.trim() !== '');
 
             const headersRow = rows[0];
-            const headerRegex = /([A-Z][A-Z\s]+)(?=[A-Z])/g;
+            const headerRegex = /([A-Z][A-Z\s]*)/g;
             let currentMatch;
             const headerMatches = [];
             while ((currentMatch = headerRegex.exec(headersRow)) !== null) {
@@ -255,22 +255,20 @@
             }
             headers = headerMatches;
             
-            const lastHeader = headersRow.substring(headersRow.lastIndexOf(headers[headers.length-1]) + headers[headers.length-1].length).trim();
-            if(lastHeader && !headers.includes(lastHeader)) {
-                headers.push(lastHeader);
-            }
-
-            const headerPositions = headers.map(h => headersRow.indexOf(h));
-            
             const fixedHeaders = ['COMPETITION', 'LOCATION', 'DATES'];
             disciplineHeaders = headers.filter(header => !fixedHeaders.includes(header));
             
             assignmentsData = rows.slice(1).map(row => {
                 let dataObject = {};
-                headers.forEach((header, index) => {
-                    let startPos = headerPositions[index];
-                    let endPos = headerPositions[index + 1] || row.length;
-                    let value = row.substring(startPos, endPos).trim();
+                let remainingRow = row;
+                headers.forEach(header => {
+                    let nextHeaderPos = -1;
+                    if (header !== headers[headers.length-1]) {
+                        nextHeaderPos = remainingRow.indexOf(headers[headers.indexOf(header) + 1]);
+                    }
+
+                    let value = nextHeaderPos !== -1 ? remainingRow.substring(0, nextHeaderPos).trim() : remainingRow.trim();
+                    remainingRow = remainingRow.substring(nextHeaderPos).trim();
 
                     if (disciplineHeaders.includes(header)) {
                         dataObject[header.toLowerCase().replace(' ', '_')] = value.split(/\s+(?=[A-Z])|\n/).map(s => s.trim()).filter(s => s.length > 0);
@@ -366,5 +364,6 @@
         fetchAssignments();
     });
 </script>
+
 </body>
 </html>
