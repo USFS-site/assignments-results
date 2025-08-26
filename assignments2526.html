@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>International Assignments</title>
-    <style>
-        /* General styles */
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title></title>
+<style type="text/css">/* General styles */
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
@@ -118,18 +113,17 @@
                 border-bottom: none;
             }
         }
-    </style>
-</head>
-<body>
-    <div class="competition-finder">
-        <h2>International Assignments</h2>
-        <div class="results-info" id="status">Loading data…</div>
-        <div id="table-container"></div>
-    </div>
+</style>
+<div class="competition-finder">
+<h2>International Assignments</h2>
 
-    <script>
+<div class="results-info" id="status">Loading data…</div>
+
+<div id="table-container"></div>
+</div>
+<script>
         async function fetchAssignments() {
-            const sheetUrl = 'https://docs.google.com/spreadsheets/d/1hzDyT3jbnbVY1ge3h4qtcLVMQt5Pm6eJeg0hZsgE6bY/pub?output=csv';
+            const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9FRxYE8Vh7gaJG_vYJ8Fgj15UI-6e6YAf_AS3KDg5fAaVCZMfHvQbGH5AWIPQc7BxcELxcyZTMd1J/pub?gid=0&single=true&output=csv';
 
             try {
                 const response = await fetch(sheetUrl);
@@ -182,5 +176,3 @@
 
         document.addEventListener('DOMContentLoaded', fetchAssignments);
     </script>
-</body>
-</html>
