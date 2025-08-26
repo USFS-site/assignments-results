@@ -127,7 +127,49 @@
         <div id="table-container"></div>
     </div>
     <script>
+        // A more robust CSV parsing function
+        function parseCSV(text) {
+            const lines = text.split('\n').filter(line => line.trim().length > 0);
+            const headers = lines[0].split(',').map(header => header.trim());
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const row = [];
+                let currentCell = '';
+                let delimiter = ','; // Default delimiter
+                let inQuotes = false;
+                
+                // Use a regex to find commas within quotes or as a separator
+                const matches = lines[i].match(/(?:"([^"]*(?:""[^"]*)*)"|([^,]*))/g);
+
+                if (matches) {
+                    matches.forEach(match => {
+                        let value = match.replace(/^"|"$/g, ''); // Remove surrounding quotes
+                        row.push(value.trim());
+                    });
+                }
+                
+                // If regex fails (e.g., weird semicolons), fall back to a simpler split
+                if (row.length === 0) {
+                    row = lines[i].split(';').map(cell => cell.trim());
+                    delimiter = ';';
+                }
+
+                if (row.length === headers.length || (row.length > headers.length && delimiter === ';')) {
+                    const rowObject = {};
+                    for(let k = 0; k < headers.length; k++) {
+                        rowObject[headers[k]] = row[k] || '';
+                    }
+                    data.push(rowObject);
+                } else {
+                    console.warn('Skipping malformed row:', lines[i], 'Parsed row length:', row.length);
+                }
+            }
+            return { headers, data };
+        }
+
         async function fetchAssignments() {
+            // The URL for your publicly published Google Sheet
             const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9FRxYE8Vh7gaJG_vYJ8Fgj15UI-6e6YAf_AS3KDg5fAaVCZMfHvQbGH5AWIPQc7BxcELxcyZTMd1J/pub?gid=0&single=true&output=csv';
 
             try {
@@ -137,16 +179,7 @@
                 }
                 const csvText = await response.text();
                 
-                const lines = csvText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-                const headers = lines[0].split(',').map(header => header.trim());
-                const data = lines.slice(1).map(line => {
-                    const values = line.split(',').map(value => value.trim());
-                    const rowObject = {};
-                    headers.forEach((header, i) => {
-                        rowObject[header] = values[i];
-                    });
-                    return rowObject;
-                });
+                const { headers, data } = parseCSV(csvText);
 
                 renderTable(headers, data);
                 setStatus(`Loaded ${data.length} assignments.`);
