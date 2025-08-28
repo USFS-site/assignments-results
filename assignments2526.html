@@ -129,21 +129,23 @@
     <script>
         function parseCSV(text) {
             const lines = text.split('\n').filter(line => line.trim().length > 0);
+            
+            // Assuming headers are on the first line of the fetched CSV
             const headers = lines[0].split(',').map(header => header.trim());
-            const data = [];
+            
+            // Adjust the slice index to start reading data from the correct row
+            // If your headers are on row 1 and data starts on row 14, change `1` to `13`
+            const dataLines = lines.slice(13);
 
-            for (let i = 1; i < lines.length; i++) {
-                const row = lines[i].split(',').map(value => value.trim());
-                if (row.length === headers.length) {
-                    const rowObject = {};
-                    headers.forEach((header, index) => {
-                        rowObject[header] = row[index];
-                    });
-                    data.push(rowObject);
-                } else {
-                    console.warn('Skipping malformed row:', lines[i], 'Parsed row length:', row.length, 'Expected:', headers.length);
-                }
-            }
+            const data = dataLines.map(line => {
+                const values = line.split(',').map(value => value.trim());
+                const rowObject = {};
+                headers.forEach((header, index) => {
+                    rowObject[header] = values[index] || '';
+                });
+                return rowObject;
+            });
+
             return { headers, data };
         }
 
@@ -178,7 +180,7 @@
                 tableHtml += '<tr>';
                 headers.forEach(header => {
                     const cellContent = row[header] || '';
-                    const formattedContent = cellContent.replace(/\n/g, '<br>');
+                    const formattedContent = cellContent.replace(/\n/g, '<br>').replace(/;/g, ', ');
                     tableHtml += `<td data-label="${header}">${formattedContent}</td>`;
                 });
                 tableHtml += '</tr>';
@@ -187,10 +189,11 @@
             tableHtml += '</tbody></table>';
             document.getElementById('table-container').innerHTML = tableHtml;
         }
+
         function setStatus(message) {
             document.getElementById('status').textContent = message;
         }
-        
+
         document.addEventListener('DOMContentLoaded', fetchAssignments);
     </script>
 </body>
