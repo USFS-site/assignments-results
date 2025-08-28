@@ -131,28 +131,17 @@
             const lines = text.split('\n').filter(line => line.trim().length > 0);
             const headers = lines[0].split(',').map(header => header.trim());
             const data = [];
-            const csvRegex = /(".*?"|[^",]+)(,|$)/g;
 
             for (let i = 1; i < lines.length; i++) {
-                const row = [];
-                let match;
-                while ((match = csvRegex.exec(lines[i])) !== null) {
-                    let value = match[1];
-                    // Remove surrounding quotes
-                    if (value.startsWith('"') && value.endsWith('"')) {
-                        value = value.substring(1, value.length - 1);
-                    }
-                    row.push(value.trim());
-                }
-
+                const row = lines[i].split(',').map(value => value.trim());
                 if (row.length === headers.length) {
                     const rowObject = {};
                     headers.forEach((header, index) => {
-                        rowObject[header] = row[index] || '';
+                        rowObject[header] = row[index];
                     });
                     data.push(rowObject);
                 } else {
-                    console.warn('Skipping malformed row:', lines[i], 'Parsed row length:', row.length);
+                    console.warn('Skipping malformed row:', lines[i], 'Parsed row length:', row.length, 'Expected:', headers.length);
                 }
             }
             return { headers, data };
@@ -189,7 +178,6 @@
                 tableHtml += '<tr>';
                 headers.forEach(header => {
                     const cellContent = row[header] || '';
-                    // Replace newline characters with <br> for line breaks
                     const formattedContent = cellContent.replace(/\n/g, '<br>');
                     tableHtml += `<td data-label="${header}">${formattedContent}</td>`;
                 });
@@ -199,11 +187,10 @@
             tableHtml += '</tbody></table>';
             document.getElementById('table-container').innerHTML = tableHtml;
         }
-
         function setStatus(message) {
             document.getElementById('status').textContent = message;
         }
-
+        
         document.addEventListener('DOMContentLoaded', fetchAssignments);
     </script>
 </body>
